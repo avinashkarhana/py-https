@@ -1,13 +1,18 @@
-name: Publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+name: Publish Python 🐍 distributions 📦 to TestPyPI
 on: push
 jobs:
   build-n-publish:
-    name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+    name: Build and publish Python 🐍 distributions 📦 to TestPyPI
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@master
-      - name: Build distribution 📦 
+      - name: Set up Python 3.9 🐍
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.9
+      - name: Build 🛠 distribution 📦 
         run: python3 setup.py sdist bdist_wheel  
-      - name: Publish distribution 📦 to Test PyPI
+      - name: Publish 📤 distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
