@@ -11,7 +11,9 @@ jobs:
         with:
           python-version: 3.9
       - name: Build 🛠 distribution 📦 
-        run: python3 setup.py sdist bdist_wheel  
+        run: |
+            pip install wheel
+            python3 setup.py sdist bdist_wheel  
       - name: Publish 📤 distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
