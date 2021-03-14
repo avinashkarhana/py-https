@@ -1,8 +1,10 @@
-name: Publish Python 🐍 distributions 📦 to TestPyPI
-on: push
+name: Publish Python package 📦 to PyPI
+on: push:
+      tags:
+        - 'publish-pypi'
 jobs:
   build-n-publish:
-    name: Build and publish Python 🐍 distributions 📦 to TestPyPI
+    name: Build and publish Python 🐍 distributions 📦 to PyPI
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@master
@@ -14,8 +16,7 @@ jobs:
         run: |
             pip install wheel
             python3 setup.py sdist bdist_wheel  
-      - name: Publish 📤 distribution 📦 to Test PyPI
+      - name: Publish package 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@master
         with:
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
+          password: ${{ secrets.PYPI_API_TOKEN }}
