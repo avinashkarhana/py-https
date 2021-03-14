@@ -1,3 +1,4 @@
+[![Build and Publish to PyPI](https://github.com/avinashkarhana/py-https/actions/workflows/publish-to-pypi.yml/badge.svg)](https://github.com/avinashkarhana/py-https/actions/workflows/publish-to-pypi.yml)
 # py-https
 
 > A simple python https server

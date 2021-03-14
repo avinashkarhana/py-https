@@ -1,8 +1,5 @@
 name: Publish Python package 📦 to PyPI and Test-PyPI
-on: 
-  push:
-    tags:
-      - 'publish-both'
+on: workflow_dispatch
 jobs:
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
