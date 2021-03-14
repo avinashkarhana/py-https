@@ -1,4 +1,4 @@
-name: Publish Python package 📦 to PyPI
+name: Build and Publish to PyPI
 on: 
   push:
     tags:
