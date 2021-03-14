@@ -70,8 +70,24 @@ def getVersion():
             return line.split(delim)[1]
         raise RuntimeError("Unable to find version string.")
 
+def getUsage():
+    st=False
+    usage=""
+    for line in read("./__init__.py").splitlines():
+        if st and not line.startswith('"""'):
+           usage+=line+"\n"
+        if line.startswith('__usage__'):
+            st=True
+        if st and line.startswith('"""'):
+            break
+    if not st:
+        raise RuntimeError("Unable to find usage string.")
+    else:
+        return usage
+
+
 def initstart():
-    usage=read("./usage.txt")
+    usage=getUsage()
     
     try:
         h='0.0.0.0'
