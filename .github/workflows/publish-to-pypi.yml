@@ -1,7 +1,8 @@
 name: Publish Python package 📦 to PyPI
-on: push:
-      tags:
-        - 'publish-pypi'
+on: 
+  push:
+    tags:
+      - 'publish-pypi'
 jobs:
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI
