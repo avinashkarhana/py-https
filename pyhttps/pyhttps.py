@@ -3,18 +3,32 @@ import http.server, ssl, os, sys, codecs
 def getcurrentPath():
     return os.path.abspath(os.getcwd())+'/'
 
-# generate self signed certificate using openssl command
-def generate_selfsigned_cert():
-    # absolute path of pyServer.py
-    currentPath=getcurrentPath()
+
+def generate_selfsigned_cert(certpath=""):
+
+    if certpath=="":
+        currentPath=getcurrentPath()
+    else:
+        currentPath=certpath
+    
     try:
-        cmd = 'openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -out '+currentPath+'cert.pem -keyout '+currentPath+'key.pem -subj "/C=IN/ST=x/L=x/O=x/OU=x Department/CN=x"'
+        cmd = 'openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -out '+currentPath+'cert.pem -keyout '+currentPath+'key.pem -subj "/C=IN/ST=x/L=x/O=x/OU=x Department/CN=x" >/dev/null 2>&1'
         os.system(cmd)
+        cert=currentPath+"cert.pem"
+        key=currentPath+"key.pem"
+        if not os.path.exists(cert):
+            raise ValueError('Unable to create cert.pem')
+        if not os.path.exists(key):
+            raise ValueError("Unable to create cert.pem")
         print('####Certificate Generated####')
+    except ValueError as err:
+        print(err.args[0],"\nPossible causes may include low privilage and no write access in current directory")
+        exit()
     except:
         print('Error while generating certificate')
+        exit()
 
-# starts server on provided host and port
+
 def startServer(host,port,cert,key):
     currentPath=getcurrentPath()
     if cert=="":
@@ -30,8 +44,16 @@ def startServer(host,port,cert,key):
 
 
     server_address = (host, port)
-    httpd = http.server.HTTPServer(server_address, http.server.SimpleHTTPRequestHandler)
-    httpd.socket = ssl.wrap_socket (httpd.socket, certfile = cert,keyfile = key, server_side=True)
+    try:
+        httpd = http.server.HTTPServer(server_address, http.server.SimpleHTTPRequestHandler)
+    except PermissionError:
+        print("##################################\nUnable to Start Server!\nPermission Error\nTry with elevated privilages with sudo or 'Run as Administrator'")
+        exit()
+    try:
+        httpd.socket = ssl.wrap_socket (httpd.socket, certfile = cert,keyfile = key, server_side=True)
+    except ssl.SSLError as e:
+        print("##################################\nUnable to Start Server!\nSSL Error: ",e,"\nProbable causes may include mismatch of cert and key file (using wrong key file for certain cert file or vice-versa)")
+        exit()
     print("Server started at https://" + server_address[0]+":"+str(server_address[1]))
     httpd.serve_forever()
 
@@ -49,18 +71,7 @@ def getVersion():
         raise RuntimeError("Unable to find version string.")
 
 def initstart():
-    usage="""
-        USAGE:
-            pysrvhttps.py [-option value] [port]
-        OPTIONS:
-            --v             Version Info
-            --help          Help and usage Info
-            -p              Port Number [Port 443,80 requires sudo]
-            -h              Host address
-            -c              ssl cert file location
-            -k              ssl key file location
-            -gencert        Auto Generate SSL Cert and Key [openssl must be installed and included in PATH]
-    """
+    usage=read("./usage.txt")
     
     try:
         h='0.0.0.0'
@@ -75,7 +86,18 @@ def initstart():
             exit()
         if len(sys.argv)>1:
             if "-gencert" in sys.argv:
-                generate_selfsigned_cert()
+                tmpi=sys.argv.index('-gencert')
+                if (len(sys.argv)-1)!=tmpi:
+                    if sys.argv[tmpi+1] not in ['-p','-k','-c','-h','--v','--help']:
+                        certspath=sys.argv[tmpi+1]
+                        if certspath[-1]!="/":certspath+="/"
+                        generate_selfsigned_cert(certpath=certspath)
+                        c=certspath+"cert.pem"
+                        k=certspath+"key.pem"
+                    else:
+                        generate_selfsigned_cert()
+                else:       
+                    generate_selfsigned_cert()
             if "-p" in sys.argv:
                 try:
                     p=int(sys.argv[sys.argv.index('-p')+1])
@@ -110,12 +132,12 @@ def initstart():
                 p=int(sys.argv[-1])
             except:
                 pass
-        # you can change the host and port
+
         startServer(h,p,c,k)
     except KeyboardInterrupt:
         print("\nServer Stopped!")
 
-# entry point of script
+
 if __name__ == '__main__':
     initstart()
 

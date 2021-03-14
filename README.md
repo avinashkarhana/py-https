@@ -21,12 +21,16 @@
 
 ## OPTIONS:
 
-    --v         Version Info
-    --help      Help and usage Info
-    -p          Port Number [Port 443,80 requires sudo]
-    -h          Host address
-    -c          ssl cert file location
-    -k          ssl key file location
-    -gencert    Auto Generate SSL Cert and Key* 
-            
-    *[openssl must be installed and included in PATH for -gencert]
+    --v             Version Info(**)
+    --help          Help and usage Info(**)
+    -p              Port Number [Port 443,80 may require sudo or elivated permissions]
+    -h              Host address
+    -c              ssl cert file location
+    -k              ssl key file location
+    -gencert        Auto Generate SSL Cert and Key(#)
+    (-gencert [Value]: Target Path for generating certificates)
+    
+    ** [No value needed for these type of options]
+    #  [Optional value for this type of option]
+    
+    >>> openssl must be installed and included in PATH for -gencert]
