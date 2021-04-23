@@ -35,4 +35,4 @@
     ** [No value needed for these type of options]
     #  [Optional value for this type of option]
     
-    >>> openssl must be installed and included in PATH for -gencert]
+    >>> openssl must be installed and included in PATH for -gencert otpion to work
